@@ -130,6 +130,9 @@ server {
 
         add_header X-Cache-Status $upstream_cache_status;
 
+        gzip_proxied any;
+        gzip_types *;
+
         location /api/ {
                 proxy_pass http://localhost:5001;
         }
