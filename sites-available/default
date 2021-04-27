@@ -18,6 +18,8 @@
 
 # Default server configuration
 #
+proxy_cache_path  /var/www/covid19-neera-cache/  levels=1:2    keys_zone=COVIDNEERA:10m inactive=5m  max_size=100m;
+
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
@@ -119,6 +121,14 @@ server {
 
 server {
         server_name covidsupport.neera.ai;
+
+        proxy_buffering        on;
+        proxy_cache            COVIDNEERA;
+        proxy_cache_valid      200  5m;
+        proxy_cache_use_stale  error timeout invalid_header updating
+                               http_500 http_502 http_503 http_504;
+
+        add_header X-Cache-Status $upstream_cache_status;
 
         location /api/ {
                 proxy_pass http://localhost:5001;
