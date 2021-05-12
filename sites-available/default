@@ -134,6 +134,8 @@ server {
 
 server {
         server_name covid19.neera.ai;
+	rewrite ^/$ http://covidsupport.neera.ai/ permanent;
+	rewrite ^/(.*)$ http://covidsupport.neera.ai/ permanent;
 
         location /api/ {
                 proxy_pass http://localhost:5000;
