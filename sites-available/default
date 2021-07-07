@@ -171,3 +171,40 @@ server {
 
 }
 
+
+server {
+    if ($host = beta.neera.ai) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+        server_name beta.neera.ai;
+    listen 80;
+    return 404; # managed by Certbot
+}
+
+server {
+    if ($host = pocket.neera.ai) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+	server_name pocket.neera.ai;
+	listen 80;
+    return 404; # managed by Certbot
+}
+
+server {
+    if ($host = notion.neera.ai) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+    server_name notion.neera.ai;
+    listen 80;
+    return 404; # managed by Certbot
+}
+
+server {
+    if ($host = drive.neera.ai) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+    server_name drive.neera.ai;
+    listen 80;
+    return 404; # managed by Certbot
+}
+
