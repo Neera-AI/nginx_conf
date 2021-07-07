@@ -105,26 +105,13 @@ server {
 # You can move that to a different file under sites-available/ and symlink that
 # to sites-enabled/ to enable it.
 #
-server {
-
-	server_name app.projectmojo.co;
-
-
-    listen [::]:443 ssl ipv6only=on; # managed by Certbot
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/app.projectmojo.co/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/app.projectmojo.co/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-}
 
 server {
-        server_name covidsupport.neera.ai;
+        server_name neera.ai;
 
         proxy_buffering        on;
         proxy_cache            COVIDNEERA;
-        proxy_cache_valid      200  5m;
+        proxy_cache_valid      200  10m;
         proxy_cache_use_stale  error timeout invalid_header updating
                                http_500 http_502 http_503 http_504;
 
@@ -133,27 +120,27 @@ server {
         gzip_proxied any;
         gzip_types *;
 
-        location /api/ {
-                proxy_pass http://localhost:5001;
+        location /indexes {
+                proxy_pass http://localhost:7700;
+
         }
 
-        location / {
-                proxy_pass http://localhost:3001;
+        location /api/snippets {
+                proxy_pass http://localhost:8000;
+
         }
 
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/covidsupport.neera.ai/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/covidsupport.neera.ai/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-}
-
-server {
-        server_name covid19.neera.ai;
+        location /api/hn/search {
+                # Put your static files in /var/www/app;
+                # root /var/www/app;
+                # Or run your frontend service on port 3000
+                proxy_pass http://localhost:8000;
+        }
 
         location /api/ {
+                # Put your static files in /var/www/app;
+                # root /var/www/app;
+                # Or run your frontend service on port 3000
                 proxy_pass http://localhost:5000;
         }
 
@@ -161,10 +148,10 @@ server {
                 proxy_pass http://localhost:3000;
         }
 
-
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/covid19.neera.ai/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/covid19.neera.ai/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/neera.ai/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/neera.ai/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
@@ -172,73 +159,12 @@ server {
 
 
 server {
-        server_name hn.neera.ai;
-
-        location / {
-                proxy_pass https://localhost:7700/;
-        }
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/hn.neera.ai/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/hn.neera.ai/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-
-}
-
-
-server {
-        server_name metrics.neera.ai;
-
-        location / {
-                proxy_pass https://localhost:5601/;
-        }
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/metrics.neera.ai/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/metrics.neera.ai/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-}
-
-server {
-    if ($host = app.projectmojo.co) {
+    if ($host = neera.ai) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
-	listen 80;
-	listen [::]:80;
-
-	server_name app.projectmojo.co;
-    return 404; # managed by Certbot
-
-
-}
-
-
-server {
-    if ($host = metrics.neera.ai) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-
-        server_name metrics.neera.ai;
-    listen 80;
-    return 404; # managed by Certbot
-
-
-}
-
-server {
-    if ($host = hn.neera.ai) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-
-        server_name hn.neera.ai;
+        server_name neera.ai;
     listen 80;
     return 404; # managed by Certbot
 
@@ -247,29 +173,38 @@ server {
 
 
 server {
-    if ($host = covid19.neera.ai) {
+    if ($host = beta.neera.ai) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
-
-
-        server_name covid19.neera.ai;
+        server_name beta.neera.ai;
     listen 80;
     return 404; # managed by Certbot
-
-
 }
 
-
 server {
-    if ($host = covidsupport.neera.ai) {
+    if ($host = pocket.neera.ai) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
-
-
-        server_name covidsupport.neera.ai;
-
+	server_name pocket.neera.ai;
 	listen 80;
     return 404; # managed by Certbot
-
-
 }
+
+server {
+    if ($host = notion.neera.ai) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+    server_name notion.neera.ai;
+    listen 80;
+    return 404; # managed by Certbot
+}
+
+server {
+    if ($host = drive.neera.ai) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+    server_name drive.neera.ai;
+    listen 80;
+    return 404; # managed by Certbot
+}
+
