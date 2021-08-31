@@ -206,3 +206,12 @@ server {
         proxy_pass http://localhost:5050;
     }
 }
+
+server {
+    server_name slack.neera.ai;
+
+    location / {
+        proxy_pass http://localhost:9111;
+   }
+
+}
