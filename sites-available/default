@@ -137,10 +137,20 @@ server {
                 proxy_pass http://localhost:8000;
         }
 
+        location /api/indexes {
+                # Put your static files in /var/www/app;
+                # root /var/www/app;
+                # Or run your frontend service on port 3000
+                proxy_pass http://localhost:5000;
+        }
+
         location /api/ {
                 # Put your static files in /var/www/app;
                 # root /var/www/app;
                 # Or run your frontend service on port 3000
+                expires -1;
+          	add_header 'Cache-Control' 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+
                 proxy_pass http://localhost:5000;
         }
 
@@ -159,6 +169,80 @@ server {
 
 
 server {
+        server_name beta.neera.ai;
+
+        gzip_proxied any;
+        gzip_types *;
+
+
+        location /api/ {
+                # Put your static files in /var/www/app;
+                # root /var/www/app;
+                # Or run your frontend service on port 3000
+                proxy_pass http://localhost:5111;
+        }
+
+        location / {
+                proxy_pass http://localhost:3111;
+        }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/beta.neera.ai/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/beta.neera.ai/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
+	server_name pocket.neera.ai;
+
+	location / {
+		proxy_pass http://localhost:5001;	
+	}
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/pocket.neera.ai/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/pocket.neera.ai/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
+    server_name notion.neera.ai;
+
+    location / {
+        proxy_pass http://localhost:6111;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/notion.neera.ai/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/notion.neera.ai/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
+    server_name drive.neera.ai;
+
+    location / {
+        proxy_pass http://localhost:5050;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/drive.neera.ai/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/drive.neera.ai/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
     if ($host = neera.ai) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
@@ -172,39 +256,59 @@ server {
 }
 
 
+
+
 server {
     if ($host = beta.neera.ai) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
+
+
         server_name beta.neera.ai;
+
     listen 80;
     return 404; # managed by Certbot
+
+
 }
+
 
 server {
     if ($host = pocket.neera.ai) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
+
+
 	server_name pocket.neera.ai;
+
 	listen 80;
     return 404; # managed by Certbot
+
+
 }
 
 server {
     if ($host = notion.neera.ai) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
+
+
     server_name notion.neera.ai;
     listen 80;
     return 404; # managed by Certbot
+
+
 }
 
 server {
     if ($host = drive.neera.ai) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
+
+
     server_name drive.neera.ai;
     listen 80;
     return 404; # managed by Certbot
-}
 
+
+}
